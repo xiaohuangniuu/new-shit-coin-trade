@@ -9,8 +9,8 @@ import {
   Route,
 } from "react-router-dom";
 import ScrollToTop from './components/ScrollToTop';
-import DetailPage from './pages/detail';
 import GeneratePage from './pages/generate';
+import BotPage from './pages/bot';
 
 function App() {
   return (
@@ -20,6 +20,7 @@ function App() {
         <Switch>
           {/*<Route exact path="/" component={IndexPage} />*/}
           <Route exact path="/" component={GeneratePage} />
+          <Route exact path="/bot" component={BotPage} />
         </Switch>
       </Router>
     </ChakraProvider>
