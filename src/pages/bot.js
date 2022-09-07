@@ -30,14 +30,19 @@ function BotPage(){
   const [isRun,setIsRun] = useState(false)
   const [delay, setDelay] = useState(1000)
   const [nextBuyBNB,setNextBuyBNB] = useState(0)
-  const [isSwap,setIsSwap] = useState(false)
+
+
   const [choiceAddressIndex,setChoiceAddressIndex] = useState(-1)
 
   const [logs,setLogs] = useState([])
-  useEffect(() => {
-    if (isRun && isSwap) {
 
-      const timer = setInterval(() => {
+  const [isPending,setIsPending] = useState(false)
+  useEffect(() => {
+    console.log("isRun",isRun,isPending)
+    if (isRun && !isPending) {
+
+      const timer = setInterval(async () => {
+        console.log(addressList)
         if (addressList) {
           const buyBNB = _.floor(_.random(minBNB,maxBNB,true),4)
           setNextBuyBNB(buyBNB)
@@ -49,45 +54,48 @@ function BotPage(){
             }
           }
 
+          console.log(tempAddressList)
+
           const index = _.random(0,tempAddressList.length-1)
           const addressIndex = tempAddressList[index].index
+          console.log("lll",addressIndex)
           setChoiceAddressIndex(addressIndex)
 
 
           const second = _.random(buyMinSecond,buyMaxSecond,true)
           setDelay(second*1000)
-          setIsSwap(true)
+
+
           logs.push("swap"+second+"秒即将开始,交易金额为"
             +buyBNB+"BNB,"+"用户地址为:"+addressList[index].address+"用户余额为:"+addressList[addressIndex].balance)
-          setLogs(logs)
-          setIsSwap(false)
-        }
+          setLogs(logs);
+          setIsPending(true)
 
+        }
       }, delay)
       return () => clearInterval(timer)
     }
-  }, [delay,isRun])
+  }, [delay,isRun,isPending])
 
   useEffect( ()=>{
-    (async ()=> {
-      if (!isSwap){
-        console.log("asdasdas")
-        await approveBNB()
-        await swap()
-        console.log("----")
-        setIsSwap(true)
+    (async ()=>{
+      if (isPending){
+        console.log("isPending",isPending)
+        await approveBNB(choiceAddressIndex)
+        await swap(choiceAddressIndex)
+        setIsPending(false)
       }
-
     })()
 
-  },[isSwap])
 
+  },[isPending])
   const getAccounts = ()=>{
     (async ()=>{
       const tmpAddressList = []
       setIsLoading(true)
       for (let i = 0;i<10;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
+        console.log(wallet.privateKey)
         const address = await wallet.getAddress()
         const result = await bnbProvider.getBalance(address)
         const balanceInBNB = ethers.utils.formatEther(result)
@@ -115,7 +123,7 @@ function BotPage(){
       }
     }
     setIsRun(!isRun)
-    setIsSwap(!isSwap)
+    setIsPending(false)
   }
 
   const WBNBAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd"
@@ -123,10 +131,10 @@ function BotPage(){
   const swapTokenAddress = "0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3"
   const recipientAddress = "0x28Bf8F6e2Aa87B6361293BbE6b4C940fC1ce4dDa"
 
-  const approveBNB = async () => {
+  const approveBNB = async (addressIndex) => {
 
-      const wallet0 = addressList[0]
-      console.log(wallet0)
+      const wallet0 = addressList[addressIndex]
+      console.log(addressList,wallet0,addressIndex)
       const account = wallet0.wallet.connect(bnbProvider)
       const wbnb = new ethers.Contract(
         WBNBAddress,
@@ -148,15 +156,15 @@ function BotPage(){
         console.log('Transaction receipt',receipt)
       }
 
-      const result = await bnbProvider.getBalance(wallet0.address)
-      const balanceInBNB = ethers.utils.formatEther(result)
-      addressList[0] = {wallet:wallet0.wallet,address:wallet0.address,balance:balanceInBNB}
-      setAddressList(addressList)
+    const result = await bnbProvider.getBalance(wallet0.address)
+    const balanceInBNB = ethers.utils.formatEther(result)
+    addressList[choiceAddressIndex] = {wallet:wallet0.wallet,address:wallet0.address,balance:balanceInBNB,index:wallet0.index}
+    setAddressList(addressList)
   }
 
-  const swap = async () => {
+  const swap = async (addressIndex) => {
 
-      const wallet0 = addressList[0]
+      const wallet0 = addressList[addressIndex]
       const account = wallet0.wallet.connect(bnbProvider)
       const router = new ethers.Contract(
         routerAddress,
@@ -168,11 +176,12 @@ function BotPage(){
       )
 
       const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 'ether');
-
+      console.log(String(nextBuyBNB))
       // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
       // 获取到当前0.01 wbnb能换多少币
       const amounts = await router.getAmountsOut(amountIn,
         [WBNBAddress, swapTokenAddress])
+      console.log(amounts)
 
       const amountOutMin = amounts[1].sub(amounts[1].div(10))
       // 开始交换
@@ -183,13 +192,17 @@ function BotPage(){
         recipientAddress,
         Date.now() + 1000 * 60 * 10, // 10 minutes
         {
-          gasPrice: 5000000000,
+          gasPrice: 10000000000,
           gasLimit: 1000000
         }
       )
       const receipt = await tx.wait()
       console.log('Swap receipt',receipt)
 
+      const result = await bnbProvider.getBalance(wallet0.address)
+      const balanceInBNB = ethers.utils.formatEther(result)
+      addressList[choiceAddressIndex] = {wallet:wallet0.wallet,address:wallet0.address,balance:balanceInBNB,index:wallet0.index}
+      setAddressList(addressList)
   }
 
   return (
