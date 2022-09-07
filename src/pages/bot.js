@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { ethers } from "ethers";
+import _ from "lodash"
 
 function BotPage(){
   const [mnemonic,setMnemonic] = useState("")
@@ -28,16 +29,58 @@ function BotPage(){
 
   const [isRun,setIsRun] = useState(false)
   const [delay, setDelay] = useState(1000)
+  const [nextBuyBNB,setNextBuyBNB] = useState(0)
+  const [isSwap,setIsSwap] = useState(false)
+  const [choiceAddressIndex,setChoiceAddressIndex] = useState(-1)
+
+  const [logs,setLogs] = useState([])
   useEffect(() => {
-    if (isRun) {
+    if (isRun && isSwap) {
+
       const timer = setInterval(() => {
-        console.log("dingding",delay)
+        if (addressList) {
+          const buyBNB = _.floor(_.random(minBNB,maxBNB,true),4)
+          setNextBuyBNB(buyBNB)
+
+          let tempAddressList = []
+          for (let i = 0;i< addressList.length;i++) {
+            if (parseFloat(addressList[i].balance) > parseFloat(buyBNB) ){
+              tempAddressList.push(addressList[i])
+            }
+          }
+
+          const index = _.random(0,tempAddressList.length-1)
+          const addressIndex = tempAddressList[index].index
+          setChoiceAddressIndex(addressIndex)
+
+
+          const second = _.random(buyMinSecond,buyMaxSecond,true)
+          setDelay(second*1000)
+          setIsSwap(true)
+          logs.push("swap"+second+"秒即将开始,交易金额为"
+            +buyBNB+"BNB,"+"用户地址为:"+addressList[index].address+"用户余额为:"+addressList[addressIndex].balance)
+          setLogs(logs)
+          setIsSwap(false)
+        }
+
       }, delay)
       return () => clearInterval(timer)
     }
   }, [delay,isRun])
 
+  useEffect( ()=>{
+    (async ()=> {
+      if (!isSwap){
+        console.log("asdasdas")
+        await approveBNB()
+        await swap()
+        console.log("----")
+        setIsSwap(true)
+      }
 
+    })()
+
+  },[isSwap])
 
   const getAccounts = ()=>{
     (async ()=>{
@@ -48,12 +91,14 @@ function BotPage(){
         const address = await wallet.getAddress()
         const result = await bnbProvider.getBalance(address)
         const balanceInBNB = ethers.utils.formatEther(result)
-        tmpAddressList.push({wallet:wallet,address:address,balance:balanceInBNB})
+        tmpAddressList.push({wallet:wallet,address:address,balance:balanceInBNB,index:i})
       }
       setIsLoading(false)
       setAddressList(tmpAddressList)
     })()
   }
+
+
   const toast = useToast()
   const updateIsRun = ()=> {
     if (!isRun) {
@@ -70,7 +115,7 @@ function BotPage(){
       }
     }
     setIsRun(!isRun)
-    approveBNB()
+    setIsSwap(!isSwap)
   }
 
   const WBNBAddress = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd"
@@ -78,8 +123,8 @@ function BotPage(){
   const swapTokenAddress = "0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3"
   const recipientAddress = "0x28Bf8F6e2Aa87B6361293BbE6b4C940fC1ce4dDa"
 
-  const approveBNB = () => {
-    (async ()=>{
+  const approveBNB = async () => {
+
       const wallet0 = addressList[0]
       console.log(wallet0)
       const account = wallet0.wallet.connect(bnbProvider)
@@ -89,9 +134,10 @@ function BotPage(){
         account,
       )
 
-      let checkAllowance = await wbnb.allowance("0x6C674C1eF8bC3889F9FDaDa9E0f71df70B47d231",
+      let checkAllowance = await wbnb.allowance(wallet0.address,
         routerAddress)
       // 如果授权大于0
+    console.log(checkAllowance.toString())
       if (checkAllowance.lte(0)) {
         // approve
         const tx = await wbnb.approve(
@@ -106,20 +152,12 @@ function BotPage(){
       const balanceInBNB = ethers.utils.formatEther(result)
       addressList[0] = {wallet:wallet0.wallet,address:wallet0.address,balance:balanceInBNB}
       setAddressList(addressList)
-
-
-      //console.log("balance",result.toNumber())
-      // check balance
-      //console.log(checkAllowance.gt(0))
-      // setAddressList(addressList)
-    })()
   }
 
-  const swap = () => {
-    (async ()=>{
+  const swap = async () => {
+
       const wallet0 = addressList[0]
       const account = wallet0.wallet.connect(bnbProvider)
-
       const router = new ethers.Contract(
         routerAddress,
         [
@@ -129,8 +167,8 @@ function BotPage(){
         account
       )
 
-      const amountIn = ethers.utils.parseUnits('0.001', 'ether');
-      console.log(amountIn)
+      const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 'ether');
+
       // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
       // 获取到当前0.01 wbnb能换多少币
       const amounts = await router.getAmountsOut(amountIn,
@@ -151,7 +189,7 @@ function BotPage(){
       )
       const receipt = await tx.wait()
       console.log('Swap receipt',receipt)
-    })()
+
   }
 
   return (
@@ -212,7 +250,13 @@ function BotPage(){
       </chakra.div>
       <Button disabled={isRun} mt={2} colorScheme={'blue'} onClick={()=>{updateIsRun()}}>确定配置</Button>
       {isRun?  <Button mt={2} colorScheme={'blue'} onClick={()=>{updateIsRun()}}>停止运行</Button>:""}
-      <chakra.div>
+      <chakra.div mt={2} borderRadius={"0.325rem"} overflow={'auto'} bg={'purple.200'} p={2}>
+        日志:<br/>
+        {logs? logs.map((v,k)=>{
+          return <chakra.div>
+            {v}
+          </chakra.div>
+        }):""}
       </chakra.div>
     </Container>
 
