@@ -295,7 +295,7 @@ function BotPage(){
         <Input mt={2} mb={2}
                onChange={(event)=>{setRouterAddress(event.target.value)}}
                focusBorderColor='pink.400'
-               placeholder='请输入swap recipe地址 不填默认测试网地址'
+               placeholder='请输入swap Router地址 不填默认测试网地址'
                size='sm'
         />
 
