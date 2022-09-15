@@ -25,9 +25,12 @@ function MergePage(){
   const getAccounts = ()=>{
     (async ()=>{
 
+      const gasPrice = await bnbProvider.getGasPrice()
+      console.log("dd",ethers.utils.formatUnits(gasPrice, "ether"))
+
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<10;i++) {
+      for (let i = 0;i<100;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
         console.log(wallet.privateKey)
         const address = await wallet.getAddress()
@@ -35,9 +38,11 @@ function MergePage(){
 
         const result = await bnbProvider.getBalance(address)
         const gas = ((await bnbProvider.getGasPrice()))
-
-        console.log(ethers.utils.formatEther(BigNumber.from(result).minus(gas)))
-        const balanceInBNB = ethers.utils.formatEther(result)
+        //console.log(result.sub(gas.mul(210000)).toString())
+        // console.log(ethers.utils.formatEther(BigNumber.from(result).minus(gas)))
+        // console.log(ethers.utils.formatEther(result))
+        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(210000)))
+        // console.log(ethers.utils.formatEther(result.sub(gas.mul(210000))))
         tmpAddressList.push({wallet:wallet,address:address,balance:balanceInBNB,index:i})
       }
       setIsLoading(false)
@@ -47,7 +52,9 @@ function MergePage(){
 
   const toast = useToast()
   const merge =() => {
+
     (async ()=>{
+      setIsLoading(true)
       if (addressList.length === 0) {
         toast({
           title: '请先扫描子账号',
@@ -60,17 +67,24 @@ function MergePage(){
         return
       }
 
+      const gasPrice = await bnbProvider.getGasPrice()
+      ethers.utils.formatUnits(gasPrice, "ether")
       for(let i = 0;i<addressList.length;i++) {
-        const wallet = addressList[i]
-        const account = wallet.wallet.connect(bnbProvider)
-        const tx = await account.sendTransaction({
-          to:receiveAddress,
-          value:ethers.utils.parseEther(wallet.balance),
-          gasLimit: ethers.utils.hexlify(10000),
-          gasPrice: ethers.utils.hexlify(parseInt(await bnbProvider.getGasPrice())),
-        })
-        console.log(tx)
+        if (parseFloat(addressList[i].balance) > parseFloat(0.0) ){
+          const wallet = addressList[i]
+          console.log("address",wallet.address)
+          const account = wallet.wallet.connect(bnbProvider)
+          const tx = await account.sendTransaction({
+            to:receiveAddress,
+            value:ethers.utils.parseEther(wallet.balance),
+            gasLimit: ethers.utils.hexlify(210000),
+            gasPrice: ethers.utils.hexlify(parseInt(await bnbProvider.getGasPrice())),
+          })
+          console.log(tx)
+        }
       }
+      setIsLoading(false)
+
 
       // const tx = signer.sendTransaction({
       //   to: "ricmoo.firefly.eth",
@@ -78,6 +92,7 @@ function MergePage(){
       // });
 
     })()
+
   }
 
   return (
@@ -113,7 +128,7 @@ function MergePage(){
         />
 
         <Button mt={2}  isLoading={isLoading} colorScheme={'blue'} onClick={getAccounts}>扫描子账号</Button>
-        <Button mt={2}  colorScheme={'blue'} onClick={merge}>一键归集资金</Button>
+        <Button mt={2}  isLoading={isLoading} colorScheme={'blue'} onClick={merge}>一键归集资金</Button>
 
 
         <chakra.div mt={2} borderRadius={"0.325rem"} maxH={"300px"} overflow={'auto'} bg={'purple.200'} p={2}>
