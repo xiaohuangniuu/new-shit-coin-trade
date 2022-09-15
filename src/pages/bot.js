@@ -70,7 +70,7 @@ function BotPage(){
 
           let tempAddressList = []
           for (let i = 0;i< addressList.length;i++) {
-            if (parseFloat(addressList[i].wbnb) > parseFloat(buyBNB) ){
+            if (parseFloat(addressList[i].balance) > parseFloat(buyBNB) ){
               tempAddressList.push(addressList[i])
             }
           }
@@ -92,7 +92,7 @@ function BotPage(){
 
 
             logs.push("swap"+second+"秒即将开始,交易金额为"
-              +buyBNB+"BNB,"+"用户地址为:"+addressList[index].address+"用户wbnb余额为:"+addressList[addressIndex].wbnb)
+              +buyBNB+"BNB,"+"用户地址为:"+addressList[index].address+"用户bnb余额为:"+addressList[addressIndex].balance)
             setLogs(logs);
             setIsPending(true)
           }
