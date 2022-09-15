@@ -11,6 +11,7 @@ import {
 import ScrollToTop from './components/ScrollToTop';
 import GeneratePage from './pages/generate';
 import BotPage from './pages/bot';
+import MergePage from './pages/merge';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           {/*<Route exact path="/" component={IndexPage} />*/}
           <Route exact path="/" component={GeneratePage} />
           <Route exact path="/bot" component={BotPage} />
+          <Route exact path="/merge" component={MergePage} />
         </Switch>
       </Router>
     </ChakraProvider>

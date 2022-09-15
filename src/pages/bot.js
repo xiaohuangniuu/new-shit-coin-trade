@@ -108,14 +108,14 @@ function BotPage(){
         logs.push("swap即将开始")
         setLogs(logs);
         try{
-          const res = await approveBNB(choiceAddressIndex)
-          if (res) {
+          // const res = await approveBNB(choiceAddressIndex)
+          // if (res) {
             const sr = await swap(choiceAddressIndex)
             if (sr) {
               setIsPending(false)
               logs.push("本次swap结束")
             }
-          }
+          // }
         }catch (e){
           alert(e)
           setIsPending(false)
@@ -210,14 +210,16 @@ function BotPage(){
 
       const wallet0 = addressList[addressIndex]
       const account = wallet0.wallet.connect(bnbProvider)
-      const router = new ethers.Contract(
-        routerAddress,
-        [
-          'function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)',
-          'function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)'
-        ],
-        account
-      )
+
+    const router = new ethers.Contract(
+      routerAddress,
+      [
+        'function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)',
+        'function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
+        'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
+      ],
+      account
+    )
 
       const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 'ether');
       console.log(String(nextBuyBNB))
@@ -225,21 +227,21 @@ function BotPage(){
       // 获取到当前0.01 wbnb能换多少币
       const amounts = await router.getAmountsOut(amountIn,
         [WBNBAddress, tokenAddress])
-      console.log(amounts)
+
 
       const amountOutMin = amounts[1].sub(amounts[1].div(10))
       // 开始交换
-      const tx = await router.swapExactTokensForTokens(
-        amountIn,
-        amountOutMin,
+      const tx = await router.swapExactETHForTokens(
+        0,
         [WBNBAddress, tokenAddress],
         wallet0.address,
-        Date.now() + 1000 * 60 * 10, // 10 minutes
+        Date.now() + 1000 * 60 * 10,
         {
           gasPrice: Number(await bnbProvider.getGasPrice()),
-          gasLimit: 1000000
+          gasLimit: 310000,
+          value: amountIn
         }
-      )
+      );
       const receipt = await tx.wait()
       console.log('Swap receipt',receipt)
 
