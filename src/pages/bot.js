@@ -279,12 +279,12 @@ function BotPage(){
           size='sm'
         />
 
-        <Input mt={2} mb={2}
-               onChange={(event)=>{setWBNBAddress(event.target.value)}}
-               focusBorderColor='pink.400'
-               placeholder='请输入WBNB地址 不填默认测试网地址'
-               size='sm'
-        />
+        {/*<Input mt={2} mb={2}*/}
+        {/*       onChange={(event)=>{setWBNBAddress(event.target.value)}}*/}
+        {/*       focusBorderColor='pink.400'*/}
+        {/*       placeholder='请输入WBNB地址 不填默认测试网地址'*/}
+        {/*       size='sm'*/}
+        {/*/>*/}
 
         {/*<Input mt={2} mb={2}*/}
         {/*       onChange={(event)=>{setRecipientAddress(event.target.value)}}*/}
