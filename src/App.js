@@ -12,6 +12,7 @@ import ScrollToTop from './components/ScrollToTop';
 import GeneratePage from './pages/generate';
 import BotPage from './pages/bot';
 import MergePage from './pages/merge';
+import AirdropPage from './pages/airdrop';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route exact path="/" component={GeneratePage} />
           <Route exact path="/bot" component={BotPage} />
           <Route exact path="/merge" component={MergePage} />
+          <Route exact path="/airdrop" component={AirdropPage} />
         </Switch>
       </Router>
     </ChakraProvider>

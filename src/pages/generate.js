@@ -29,7 +29,8 @@ function GeneratePage(){
   }
   return (
     <chakra.div>
-      <Textarea h={"200px"} onChange={(event) => {setETHAddressList(event.target.value)}} placeholder='输入ETH地址 不要有空格 如下所示&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;
+      <Textarea h={"200px"} onChange={(event) => {setETHAddressList(event.target.value)}}
+                placeholder='输入ETH地址 不要有空格 如下所示&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;
       ' />
       <Button mt={3} onClick={generateRoot} colorScheme='blue'>Generate</Button>
       <chakra.div>
