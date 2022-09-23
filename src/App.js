@@ -13,6 +13,7 @@ import GeneratePage from './pages/generate';
 import BotPage from './pages/bot';
 import MergePage from './pages/merge';
 import AirdropPage from './pages/airdrop';
+import ReverseBotPage from "./pages/reverse_bot"
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           {/*<Route exact path="/" component={IndexPage} />*/}
           <Route exact path="/" component={GeneratePage} />
           <Route exact path="/bot" component={BotPage} />
+          <Route exact path="/reverse_bot" component={ReverseBotPage} />
           <Route exact path="/merge" component={MergePage} />
           <Route exact path="/airdrop" component={AirdropPage} />
         </Switch>
