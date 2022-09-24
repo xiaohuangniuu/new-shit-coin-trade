@@ -3,9 +3,9 @@ import {
   chakra, useToast, useMediaQuery, Container,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { ethers } from "ethers";
+import {  ethers } from 'ethers';
 import _ from "lodash"
-
+const BigNumber = require('bignumber.js');
 function ReverseBotPage(){
   const [mnemonic,setMnemonic] = useState("")
   const [isLoading,setIsLoading] = useState(false)
@@ -48,7 +48,7 @@ function ReverseBotPage(){
       const timer = setInterval(async () => {
         console.log(addressList)
         if (addressList) {
-          const buyBNB = _.floor(_.random(minBNB,maxBNB,true),4)
+          const buyBNB = _.floor(_.random(minBNB,maxBNB,false),0)
           setNextBuyBNB(buyBNB)
 
           let tempAddressList = []
@@ -94,14 +94,14 @@ function ReverseBotPage(){
         logs.push("swap即将开始")
         setLogs(logs);
         try{
-          // const res = await approveBNB(choiceAddressIndex)
-          // if (res) {
-          const sr = await swap(choiceAddressIndex)
-          if (sr) {
-            setIsPending(false)
-            logs.push("本次swap结束")
-          }
-          // }
+          const res = await approveToken(choiceAddressIndex)
+           if (res) {
+            const sr = await swap(choiceAddressIndex)
+            if (sr) {
+              setIsPending(false)
+              logs.push("本次swap结束")
+            }
+           }
         }catch (e){
           console.log(e)
           setIsPending(false)
@@ -118,9 +118,8 @@ function ReverseBotPage(){
     (async ()=>{
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<100;i++) {
+      for (let i = 0;i<10;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
-        console.log(wallet.privateKey)
         const address = await wallet.getAddress()
         // fix
         //function balanceOf(address account) public view virtual returns (uint256)
@@ -134,11 +133,14 @@ function ReverseBotPage(){
         let tokenBalance = await tokenContractObj.balanceOf(address)
         const result = await bnbProvider.getBalance(address)
         const balanceInBNB = ethers.utils.formatEther(result)
+
+
+
         tmpAddressList.push({
           wallet:wallet,
           address:address,
           balance:balanceInBNB,
-          tokenAmount:tokenBalance,
+          tokenAmount:tokenBalance.toString(),
           index:i,
         })
       }
@@ -168,6 +170,41 @@ function ReverseBotPage(){
   }
 
 
+  const approveToken = async (addressIndex) => {
+
+    const wallet0 = addressList[addressIndex]
+    console.log(addressList,wallet0,addressIndex)
+    const account = wallet0.wallet.connect(bnbProvider)
+    const tokenContractObj = new ethers.Contract(
+      tokenAddress,
+      [
+        'function balanceOf(address account) public view virtual returns (uint256)',
+        "function allowance(address owner, address spender) external view returns (uint)"
+      ],
+      wallet0.wallet.connect(bnbProvider)
+    )
+    let checkAllowance = await tokenContractObj.allowance(wallet0.address,
+      routerAddress)
+    console.log(checkAllowance.toString())
+    // 如果授权大于0
+    if (checkAllowance.lte(0)) {
+      // approve
+      const tx = await tokenContractObj.approve(
+        routerAddress, //pancake的router地址
+        ethers.constants.MaxUint256 // 授权数量
+      )
+      const receipt = await tx.wait()
+      console.log('Transaction receipt',receipt)
+    }
+
+    // const result = await bnbProvider.getBalance(wallet0.address)
+    // const balanceInBNB = ethers.utils.formatEther(result)
+    //
+    // let wbnbBalance = await wbnb.balanceOf(wallet0.address)
+    // addressList[choiceAddressIndex] = {wallet:wallet0.wallet,address:wallet0.address,balance:balanceInBNB,index:wallet0.index,wbnb:ethers.utils.formatEther(wbnbBalance)}
+    // setAddressList(addressList)
+    return true
+  }
 
   const swap = async (addressIndex) => {
 
@@ -178,23 +215,25 @@ function ReverseBotPage(){
       routerAddress,
       [
         'function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)',
-        'function swapExactTokensForTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
+        'function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
         'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
       ],
       account
     )
 
-    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 'ether');
-    console.log(String(nextBuyBNB))
+    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 9);
+    // console.log(String(nextBuyBNB),amountIn)
+    // const amountIn = new BigNumber(String(nextBuyBNB))
     // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
     // 获取到当前0.01 wbnb能换多少币
     const amounts = await router.getAmountsOut(amountIn,
       [tokenAddress, WBNBAddress])
-
+    console.log(amounts)
 
     const amountOutMin = amounts[1].sub(amounts[1].div(10))
     // 开始交换
-    const tx = await router.swapExactETHForTokens(
+    const tx = await router.swapExactTokensForETH(
+      amountIn,
       0,
       [tokenAddress, WBNBAddress],
       wallet0.address,
@@ -202,7 +241,6 @@ function ReverseBotPage(){
       {
         gasPrice: Number(await bnbProvider.getGasPrice()),
         gasLimit: 310000,
-        value: amountIn
       }
     );
     const receipt = await tx.wait()
@@ -221,7 +259,7 @@ function ReverseBotPage(){
 
     addressList[choiceAddressIndex] = {
       wallet:wallet0.wallet,
-      tokenAmount:tokenBalance,
+      tokenAmount:tokenBalance.toString(),
       address:wallet0.address,
       balance:balanceInBNB,
       index:wallet0.index, //fix
@@ -278,31 +316,29 @@ function ReverseBotPage(){
           size='sm'
         />
 
-        <Button mt={2} disabled={isLoading} isLoading={isLoading} colorScheme={'blue'} onClick={getAccounts}>扫描子账号</Button>
-        <chakra.div mt={2} borderRadius={"0.325rem"} maxH={"300px"} overflow={'auto'} bg={'purple.200'} p={2}>
-          子账号:<br/>
-          {addressList? addressList.map((v,k)=>{
-            return <chakra.div>
-              账户地址:{v.address} BNB余额:{v.balance} WBNB:{v.wbnb}
-            </chakra.div>
-          }):""}
-        </chakra.div>
-
         <Input mt={2} mb={2} onChange={(event)=>{setTokenAddress(event.target.value)}}
                focusBorderColor='pink.400'
                placeholder='请输入合约地址'
                size='sm'
         />
 
-        <Input mt={2} mb={2} onChange={(event)=>{setDecimals(parseInt(event.target.value))}}
-               focusBorderColor='pink.400'
-               placeholder='请输入合约精度'
-               size='sm'
-        />
+        <Button mt={2} disabled={isLoading} isLoading={isLoading} colorScheme={'blue'} onClick={getAccounts}>扫描子账号</Button>
+        <chakra.div mt={2} borderRadius={"0.325rem"} maxH={"300px"} overflow={'auto'} bg={'purple.200'} p={2}>
+          子账号:<br/>
+          {addressList? addressList.map((v,k)=>{
+            return <chakra.div>
+              账户地址:{v.address} BNB余额:{v.balance} token:{v.tokenAmount}
+            </chakra.div>
+          }):""}
+        </chakra.div>
 
-        <chakra.span>请输入买入BNB最小值</chakra.span>
+
+
+
+
+        <chakra.span>请输入卖出Token最小值</chakra.span>
         <NumberInput  onChange={(value) => {setMinBNB(parseFloat(value))}}
-                      defaultValue={0.001} precision={3} min={0.001} max={20}>
+                      defaultValue={1000} precision={0} min={1000} >
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -310,9 +346,9 @@ function ReverseBotPage(){
           </NumberInputStepper>
         </NumberInput>
 
-        <chakra.span>请输入买入BNB最大值</chakra.span>
+        <chakra.span>请输入卖出Token最大值</chakra.span>
         <NumberInput  onChange={(value) => {setMaxBNB(parseFloat(value))}}
-                      defaultValue={0.002} precision={3} min={0.002} max={20}>
+                      defaultValue={2000} precision={0} min={2000} >
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
