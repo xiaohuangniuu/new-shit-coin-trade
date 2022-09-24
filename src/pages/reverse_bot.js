@@ -71,7 +71,8 @@ function ReverseBotPage(){
 
           let tempAddressList = []
           for (let i = 0;i< addressList.length;i++) {
-            if (parseFloat(addressList[i].tokenAmount) > parseFloat(buyBNB) ){
+            console.log("ccc",parseFloat(addressList[i].tokenAmount) ,parseFloat(buyBNB)*Math.pow(10,decimals),Math.pow(10,decimals) )
+            if (parseFloat(addressList[i].tokenAmount) > parseFloat(buyBNB)*Math.pow(10,decimals) ){
               tempAddressList.push(addressList[i])
             }
           }
@@ -93,8 +94,8 @@ function ReverseBotPage(){
 
 
             logs.push("swap"+second+"秒即将开始,交易金额为"
-              +buyBNB+"BNB,"+"用户地址为:"+addressList[index].address
-              +"用户bnb余额为:"+addressList[addressIndex].balance+"token amount:"
+              +buyBNB+"token ,"+"用户地址为:"+addressList[index].address
+              +"用户bnb余额为:"+addressList[addressIndex].balance+"用户token amount:"
               +addressList[addressIndex].tokenAmount)
 
             setLogs(logs);
@@ -240,7 +241,7 @@ function ReverseBotPage(){
       ],
       account
     )
-    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), 9);
+    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), decimals);
     // console.log(String(nextBuyBNB),amountIn)
     // const amountIn = new BigNumber(String(nextBuyBNB))
     // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
@@ -339,6 +340,11 @@ function ReverseBotPage(){
         <Input mt={2} mb={2} onChange={(event)=>{setTokenAddress(event.target.value)}}
                focusBorderColor='pink.400'
                placeholder='请输入合约地址'
+               size='sm'
+        />
+        <Input mt={2} mb={2} onChange={(event)=>{setDecimals(parseInt(event.target.value))}}
+               focusBorderColor='pink.400'
+               placeholder='请输入精度(不填默认9)'
                size='sm'
         />
 
