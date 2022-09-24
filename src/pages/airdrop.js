@@ -86,7 +86,7 @@ function AirdropPage(){
           size='sm'
         />
 
-        <Textarea h={"300px"}    placeholder='输入ETH地址 不要有空格 如下所示&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;
+        <Textarea h={"300px"}    placeholder='输入ETH地址 不要有空格 一个地址一行如下所示&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231&#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;0x6c674c1ef8bc3889f9fdada9e0f71df70b47d231 &#13;
       ' onChange={(event)=>{
           setAddressList(event.target.value)
         }}>
