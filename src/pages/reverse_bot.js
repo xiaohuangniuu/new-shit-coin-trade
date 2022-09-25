@@ -14,7 +14,7 @@ function ReverseBotPage(){
 
   // 合约地址
   const [tokenAddress,setTokenAddress] = useState("0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3")
-  const [decimals,setDecimals] = useState(0)
+  const [decimals,setDecimals] = useState(9)
   const [maxBNB,setMaxBNB] = useState(0.002)
   const [minBNB,setMinBNB] = useState(0.001)
   const [buyMinSecond,setBuyMinSecond] = useState(1)
@@ -140,7 +140,7 @@ function ReverseBotPage(){
     (async ()=>{
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<10;i++) {
+      for (let i = 0;i<100;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
         const address = await wallet.getAddress()
         // fix
