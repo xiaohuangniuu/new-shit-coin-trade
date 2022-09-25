@@ -142,6 +142,14 @@ function ReverseBotPage(){
         alert("填写合约地址");
         return
       }
+      if (!ethers.utils.isValidMnemonic(mnemonic)) {
+        alert("助记词不合法请检查")
+        return
+      }
+      if (mnemonic == "") {
+        alert("助记词不能为空")
+        return
+      }
       const tmpAddressList = []
       setIsLoading(true)
       for (let i = 0;i<10;i++) {
