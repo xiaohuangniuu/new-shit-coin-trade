@@ -22,7 +22,6 @@ function AirdropPage(){
   },[rpcUrl])
 
 
-
   const airdrop =() => {
     (async ()=>{
       if (parseFloat(bnbNumber) <= 0) {
