@@ -14,6 +14,7 @@ import BotPage from './pages/bot';
 import MergePage from './pages/merge';
 import AirdropPage from './pages/airdrop';
 import ReverseBotPage from "./pages/reverse_bot"
+import SendToken from "./pages/sendToken"
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Route exact path="/reverse_bot" component={ReverseBotPage} />
           <Route exact path="/merge" component={MergePage} />
           <Route exact path="/airdrop" component={AirdropPage} />
+          <Route exact path="/send_token" component={SendToken} />
         </Switch>
       </Router>
     </ChakraProvider>
