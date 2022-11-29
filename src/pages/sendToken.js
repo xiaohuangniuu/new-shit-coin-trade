@@ -11,7 +11,7 @@ import {
   NumberDecrementStepper,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
-import { ethers } from "ethers";
+import { BigNumber, ethers } from 'ethers';
 import _ from "lodash"
 import ReverseBotPage from './reverse_bot';
 
@@ -86,11 +86,18 @@ function SendToken(){
         if (ethers.utils.isAddress(list[i])) {
           if (maxToken > 0 && minToken >0) {
             console.log("随机数据")
-            transferNumber = _.floor(_.random(minToken,maxToken,true),4)
+            transferNumber = _.floor(_.random(minToken,maxToken,false),0)
+            console.log("随机number",transferNumber)
           }
+
+          //console.log(tokenNumber,transferNumber * 10 ** decimal)
           const transferResult = await token.transfer(
             list[i],
-            transferNumber * 10 ** decimal
+            transferNumber * 10 ** decimal,
+            {
+              gasPrice: Number(await bnbProvider.getGasPrice()),
+              gasLimit: 310000,
+            }
           )
 
           const dd = await transferResult.wait()

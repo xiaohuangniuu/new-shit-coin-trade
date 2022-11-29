@@ -362,7 +362,7 @@ function BotPage(){
 
         <chakra.span>请输入购买的最快频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMinSecond(parseInt(value))}}
-                       defaultValue={1} precision={0} min={1} max={20}>
+                       defaultValue={1} precision={0} min={1} max={200}>
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -372,7 +372,7 @@ function BotPage(){
 
         <chakra.span>请输入购买的最慢频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMaxSecond(parseInt(value))}}
-                       defaultValue={2} precision={0} min={2} max={20}>
+                       defaultValue={2} precision={0} min={2} max={1000}>
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
