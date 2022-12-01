@@ -136,7 +136,7 @@ function ReverseBotPage(){
       }
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<100;i++) {
+      for (let i = 0;i<50;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic.trim(),"m/44'/60'/0'/0/"+i);
         const address = await wallet.getAddress()
         // fix
@@ -381,7 +381,7 @@ function ReverseBotPage(){
 
         <chakra.span>请输入卖的最快频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMinSecond(parseInt(value))}}
-                       defaultValue={1} precision={0} min={1} max={20}>
+                       defaultValue={1} precision={0} min={1} max={1000}>
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />
@@ -391,7 +391,7 @@ function ReverseBotPage(){
 
         <chakra.span>请输入卖的最慢频率(单位秒)</chakra.span>
         <NumberInput   onChange={(value) => {setBuyMaxSecond(parseInt(value))}}
-                       defaultValue={2} precision={0} min={2} max={20}>
+                       defaultValue={2} precision={0} min={2} max={1000}>
           <NumberInputField />
           <NumberInputStepper>
             <NumberIncrementStepper />

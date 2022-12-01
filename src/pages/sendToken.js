@@ -90,13 +90,14 @@ function SendToken(){
             console.log("随机number",transferNumber)
           }
 
+          console.log(decimal)
           //console.log(tokenNumber,transferNumber * 10 ** decimal)
           const transferResult = await token.transfer(
             list[i],
-            transferNumber * 10 ** decimal,
+            ethers.utils.parseUnits(String(transferNumber), decimal),
             {
               gasPrice: Number(await bnbProvider.getGasPrice()),
-              gasLimit: 310000,
+              gasLimit: 210000,
             }
           )
 
