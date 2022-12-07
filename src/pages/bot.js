@@ -368,7 +368,7 @@ function BotPage(){
             setChoiceSellAddressIndex(addressIndex)
 
 
-            const second = _.random(buyMinSecond,buyMaxSecond,true)
+            const second = _.random(buyMinTokenSecond,buyMaxTokenSecond,true)
             setSellDelay(second*1000)
 
 
