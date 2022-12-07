@@ -136,7 +136,7 @@ function ReverseBotPage(){
       }
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<50;i++) {
+      for (let i = 0;i<100;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic.trim(),"m/44'/60'/0'/0/"+i);
         const address = await wallet.getAddress()
         // fix
