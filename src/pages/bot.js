@@ -133,7 +133,7 @@ function BotPage(){
 
       const tmpAddressList = []
       setIsLoading(true)
-      for (let i = 0;i<10;i++) {
+      for (let i = 0;i<100;i++) {
         const wallet = ethers.Wallet.fromMnemonic(mnemonic,"m/44'/60'/0'/0/"+i);
         const address = await wallet.getAddress()
         console.log(wallet.address)
