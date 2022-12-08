@@ -232,7 +232,7 @@ function ReverseBotPage(){
       clearInterval(tt)
     }, 60*min*1000)
     return () => clearInterval(tt)
-  },[])
+  },[tokenAddress])
   const swap = async (addressIndex) => {
 
     const wallet0 = addressList[addressIndex]
