@@ -97,7 +97,7 @@ function SendToken(){
             ethers.utils.parseUnits(String(transferNumber), decimal),
             {
               gasPrice: Number(await bnbProvider.getGasPrice()),
-              gasLimit: 210000,
+              gasLimit: 21000,
             }
           )
 
