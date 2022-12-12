@@ -66,7 +66,7 @@ function BotPage(){
 
       const timer = setInterval(async () => {
         const gas = ((await bnbProvider.getGasPrice()))
-        const gasPrice = ethers.utils.formatEther(gas.mul(21000))
+        const gasPrice = ethers.utils.formatEther(gas.mul(41000))
         if (addressList) {
           const buyBNB = _.floor(_.random(minBNB,maxBNB,true),4)
           setNextBuyBNB(buyBNB)
@@ -141,7 +141,7 @@ function BotPage(){
         const address = await wallet.getAddress()
         console.log(wallet.address)
         const result = await bnbProvider.getBalance(address)
-        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(21000)))
+        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(41000)))
 
 
         const tokenContractObj = new ethers.Contract(
@@ -352,9 +352,9 @@ function BotPage(){
           let tempAddressList = []
           for (let i = 0;i< addressList.length;i++) {
             const curBalance = ethers.utils.parseUnits(String(addressList[i].balance), 'ether');
-            console.log("curBalance",curBalance.toString(),gas.mul(21000).toString())
+            console.log("curBalance",curBalance.toString(),gas.mul(41000).toString())
             if (parseFloat(addressList[i].tokenAmount) > parseFloat(sellToken)*Math.pow(10,decimals) &&
-              curBalance.gt(gas.mul(21000))
+              curBalance.gt(gas.mul(41000))
             ){
               tempAddressList.push(addressList[i])
             }
