@@ -42,8 +42,6 @@ function Monitor(){
             if (data[i]["to_symbol"] == symbol) {
               let flag = true
               for (let j = 0;j< list.length;j++) {
-                console.log("A",String(data[i]["wallet_address"]).toLowerCase())
-                console.log("B",String(list[j]).toLowerCase())
                 if (String(data[i]["wallet_address"]).toLowerCase() == String(list[j]).toLowerCase()) {
                   flag = false
                 }
@@ -51,7 +49,7 @@ function Monitor(){
 
               if (flag) {
                 newLogs.push(
-                  "交易hash"+data[i]["transaction"]+"买入币种为:"+data[i]["from_symbol"]+"价值为$"+data[i]["amount_usd"])
+                  "交易hash:"+data[i]["transaction"]+"买入币种为:"+data[i]["from_symbol"]+"价值为$"+data[i]["amount_usd"])
 
               }
             }
@@ -60,7 +58,7 @@ function Monitor(){
         setLogs(newLogs);
         console.log(res)
 
-      }, 3000)
+      }, 3000*2)
 
       return () => clearInterval(timer)
     }
@@ -99,7 +97,7 @@ function Monitor(){
 
       </Textarea>
       <Button disabled={isRun} mt={2} colorScheme={'blue'} onClick={()=>{updateIsRun()}}>确定监控配置</Button>
-      {isRun?  <Button mt={2} colorScheme={'blue'} onClick={()=>{updateIsRun()}}>停止运行购买</Button>:""}
+      {isRun?  <Button mt={2} colorScheme={'blue'} onClick={()=>{updateIsRun()}}>停止监控</Button>:""}
     </Container>
   <chakra.div mt={2} borderRadius={"0.325rem"} overflow={'auto'} bg={'purple.200'} p={2}>
     日志:<br/>
