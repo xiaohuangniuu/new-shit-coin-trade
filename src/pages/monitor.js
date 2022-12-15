@@ -49,8 +49,7 @@ function Monitor(){
 
               if (flag) {
                 newLogs.push(
-                  "交易hash:"+data[i]["transaction"]+"买入币种为:"+data[i]["from_symbol"]+"价值为$"+data[i]["amount_usd"])
-
+                  "交易hash: "+data[i]["transaction"]+"买入币种为:"+data[i]["from_symbol"]+"价值为$"+data[i]["amount_usd"])
               }
             }
           }

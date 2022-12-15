@@ -167,7 +167,7 @@ function BotPage(){
         tmpAddressList.push({
           wallet:wallet,
           address:address,
-          balance:balanceInBNB,
+          balance:parseFloat(balanceInBNB)-0.01,
           index:i,
           wbnb:0,
           tokenAmount:tokenBalance.toString(),
@@ -300,7 +300,7 @@ function BotPage(){
       newAddressList[choiceAddressIndex] =  {
         wallet:wallet0.wallet,
         address:wallet0.address,
-        balance:balanceInBNB,
+        balance:parseFloat(balanceInBNB)-0.01,
         index:wallet0.index,
         wbnb:0,
         tokenAmount:tokenBalance.toString(),
@@ -493,7 +493,7 @@ function BotPage(){
       wallet:wallet0.wallet,
       tokenAmount:tokenBalance.toString(),
       address:wallet0.address,
-      balance:balanceInBNB,
+      balance:parseFloat(balanceInBNB)-0.01,
       index:wallet0.index, //fix
     }
     setAddressList(newAddressList)
