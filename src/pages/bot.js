@@ -143,8 +143,9 @@ function BotPage(){
         const address = await wallet.getAddress()
         console.log(wallet.address)
         const result = await bnbProvider.getBalance(address)
-        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)))
-
+        const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
+        console.log("ccc",balanceInBNB)
 
         const tokenContractObj = new ethers.Contract(
           tokenAddress,
@@ -167,7 +168,7 @@ function BotPage(){
         tmpAddressList.push({
           wallet:wallet,
           address:address,
-          balance:parseFloat(balanceInBNB)-0.01,
+          balance:balanceInBNB,
           index:i,
           wbnb:0,
           tokenAmount:tokenBalance.toString(),
@@ -275,8 +276,8 @@ function BotPage(){
       console.log('Swap receipt',receipt)
     const gas = ((await bnbProvider.getGasPrice()))
       const result = await bnbProvider.getBalance(wallet0.address)
-
-    const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)))
+    const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+    const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
 
       // const wbnb = new ethers.Contract(
       //   WBNBAddress,
@@ -300,7 +301,7 @@ function BotPage(){
       newAddressList[choiceAddressIndex] =  {
         wallet:wallet0.wallet,
         address:wallet0.address,
-        balance:parseFloat(balanceInBNB)-0.01,
+        balance:balanceInBNB,
         index:wallet0.index,
         wbnb:0,
         tokenAmount:tokenBalance.toString(),
@@ -356,6 +357,7 @@ function BotPage(){
 
           let tempAddressList = []
           for (let i = 0;i< addressList.length;i++) {
+            console.log(String(addressList[i].balance))
             const curBalance = ethers.utils.parseUnits(String(addressList[i].balance), 'ether');
             console.log("curBalance",curBalance.toString(),gas.mul(610000).toString())
             if (parseFloat(addressList[i].tokenAmount) > parseFloat(sellToken)*Math.pow(10,decimals) &&
@@ -477,7 +479,8 @@ function BotPage(){
     const gas = ((await bnbProvider.getGasPrice()))
 
 
-    const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)))
+    const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+    const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
 
     const tokenContractObj = new ethers.Contract(
       tokenAddress,
@@ -493,7 +496,7 @@ function BotPage(){
       wallet:wallet0.wallet,
       tokenAmount:tokenBalance.toString(),
       address:wallet0.address,
-      balance:parseFloat(balanceInBNB)-0.01,
+      balance:balanceInBNB,
       index:wallet0.index, //fix
     }
     setAddressList(newAddressList)
