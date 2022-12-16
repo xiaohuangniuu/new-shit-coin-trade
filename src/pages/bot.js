@@ -143,7 +143,7 @@ function BotPage(){
         const address = await wallet.getAddress()
         console.log(wallet.address)
         const result = await bnbProvider.getBalance(address)
-        const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+        const subIn = ethers.utils.parseUnits(String(0.03), 'ether');
         const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
         console.log("ccc",balanceInBNB)
 
@@ -276,7 +276,7 @@ function BotPage(){
       console.log('Swap receipt',receipt)
     const gas = ((await bnbProvider.getGasPrice()))
       const result = await bnbProvider.getBalance(wallet0.address)
-    const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+    const subIn = ethers.utils.parseUnits(String(0.03), 'ether');
     const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
 
       // const wbnb = new ethers.Contract(
@@ -479,7 +479,7 @@ function BotPage(){
     const gas = ((await bnbProvider.getGasPrice()))
 
 
-    const subIn = ethers.utils.parseUnits(String(0.01), 'ether');
+    const subIn = ethers.utils.parseUnits(String(0.03), 'ether');
     const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(610000)).sub(subIn))
 
     const tokenContractObj = new ethers.Contract(
