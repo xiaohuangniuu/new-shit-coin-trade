@@ -256,7 +256,7 @@ function ReverseBotPage(){
       [tokenAddress, WBNBAddress])
     console.log(amounts)
 
-    const amountOutMin = amounts[1].sub(amounts[1].div(25))
+    const amountOutMin = amounts[1].sub(amounts[1].div(60))
     //开始交换
     let address = wallet0.address
 
