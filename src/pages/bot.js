@@ -10,6 +10,9 @@ function BotPage(){
   const [mnemonic,setMnemonic] = useState("")
   const [isLoading,setIsLoading] = useState(false)
   const [addressList,setAddressList] = useState()
+  const [buyHisAddressList,setBuyHisAddressList] = useState([])
+  const [sellHisAddressList,setSellHisAddressList] = useState([])
+
   const [bnbProvider,setBNBProvider] = useState(null)
 
   // 合约地址
@@ -75,11 +78,23 @@ function BotPage(){
           let tempAddressList = []
           for (let i = 0;i< addressList.length;i++) {
             if (parseFloat(addressList[i].balance) > parseFloat(buyBNB)+ parseFloat(gasPrice) ){
-              tempAddressList.push(addressList[i])
+              let isBuyAddress = false
+              if (buyHisAddressList.length > 0) {
+                for(let b = 0 ;i<buyHisAddressList.length;b++){
+                  if (buyHisAddressList[b] === addressList[i]){
+                    isBuyAddress = true
+                  }
+                }
+              }
+
+              if (isBuyAddress === false) {
+                tempAddressList.push(addressList[i])
+              }
             }
           }
 
           if (tempAddressList.length == 0){
+            setBuyHisAddressList([]);
             logs.push("全部账户都没钱了")
             setLogs(logs);
 
@@ -306,8 +321,10 @@ function BotPage(){
         wbnb:0,
         tokenAmount:tokenBalance.toString(),
       }
-
       setAddressList(newAddressList)
+      let hisBuyAddressList = [...buyHisAddressList]
+      hisBuyAddressList.unshift(wallet0.address)
+      setBuyHisAddressList(hisBuyAddressList.slice(0,20))
       return true
   }
 
@@ -363,11 +380,23 @@ function BotPage(){
             if (parseFloat(addressList[i].tokenAmount) > parseFloat(sellToken)*Math.pow(10,decimals) &&
               curBalance.gt(gas.mul(610000))
             ){
-              tempAddressList.push(addressList[i])
+
+              let isSellAddress = false
+              if (sellHisAddressList.length > 0) {
+                for(let b = 0 ;i<sellHisAddressList.length;b++){
+                  if (sellHisAddressList[b] === addressList[i]){
+                    isSellAddress = true
+                  }
+                }
+              }
+              if (isSellAddress === false) {
+                tempAddressList.push(addressList[i])
+              }
             }
           }
 
           if (tempAddressList.length == 0){
+            setSellHisAddressList([])
             logs.push("全部账户都没钱了")
             setLogs(logs);
           }else {
@@ -500,6 +529,11 @@ function BotPage(){
       index:wallet0.index, //fix
     }
     setAddressList(newAddressList)
+
+
+    let hisSellAddressList = [...sellHisAddressList]
+    hisSellAddressList.unshift(wallet0.address)
+    setSellHisAddressList(hisSellAddressList.slice(0,20))
     return true
   }
 
