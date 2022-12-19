@@ -247,7 +247,8 @@ function ReverseBotPage(){
       ],
       account
     )
-    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), decimals).add(10);
+    const amountIn = ethers.utils.parseUnits(String(nextBuyBNB), decimals);
+    console.log("cccc",amountIn.toString())
     // console.log(String(nextBuyBNB),amountIn)
     // const amountIn = new BigNumber(String(nextBuyBNB))
     // 0xa6c8b55c8fc30b9448367f18c59f87cccb4a8de3 替换自己的合约地址
@@ -256,8 +257,9 @@ function ReverseBotPage(){
       [tokenAddress, WBNBAddress])
     console.log(amounts)
 
-    const amountOutMin = amounts[1].sub(amounts[1].div(60))
+    const amountOutMin = amounts[1].sub(amounts[1].div(10))
     //开始交换
+    console.log("amountOutMin",amountOutMin.toString())
     let address = wallet0.address
 
 
@@ -278,7 +280,7 @@ function ReverseBotPage(){
       Date.now() + 1000 * 60 * 10,
       {
         gasPrice: Number(await bnbProvider.getGasPrice()),
-        gasLimit: 310000,
+        gasLimit: 510000,
       }
     );
     const receipt = await tx.wait()
