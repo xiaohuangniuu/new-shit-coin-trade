@@ -324,7 +324,12 @@ function BotPage(){
       setAddressList(newAddressList)
       let hisBuyAddressList = [...buyHisAddressList]
       hisBuyAddressList.unshift(wallet0.address)
-      setBuyHisAddressList(hisBuyAddressList.slice(0,20))
+      if (hisBuyAddressList.length > 20) {
+        setBuyHisAddressList(hisBuyAddressList.slice(0,20))
+      }else {
+        setBuyHisAddressList(hisBuyAddressList)
+      }
+
       return true
   }
 
@@ -533,7 +538,11 @@ function BotPage(){
 
     let hisSellAddressList = [...sellHisAddressList]
     hisSellAddressList.unshift(wallet0.address)
-    setSellHisAddressList(hisSellAddressList.slice(0,20))
+    if (hisSellAddressList.length > 20) {
+      setSellHisAddressList(hisSellAddressList.slice(0,20))
+    }else {
+      setSellHisAddressList(hisSellAddressList)
+    }
     return true
   }
 
