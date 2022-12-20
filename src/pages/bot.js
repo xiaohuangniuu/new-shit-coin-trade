@@ -79,13 +79,17 @@ function BotPage(){
           for (let i = 0;i< addressList.length;i++) {
             if (parseFloat(addressList[i].balance) > parseFloat(buyBNB)+ parseFloat(gasPrice) ){
               let isBuyAddress = false
-              if (buyHisAddressList.length > 0) {
-                for(let b = 0 ;i<buyHisAddressList.length;b++){
-                  if (buyHisAddressList[b] === addressList[i]){
-                    isBuyAddress = true
+              console.log("isBuyAddress",buyHisAddressList)
+              if (buyHisAddressList) {
+                if (buyHisAddressList.length > 0) {
+                  for(let b = 0 ;b<buyHisAddressList.length;b++){
+                    if (buyHisAddressList[b] === addressList[i]){
+                      isBuyAddress = true
+                    }
                   }
                 }
               }
+
 
               if (isBuyAddress === false) {
                 tempAddressList.push(addressList[i])
@@ -322,8 +326,12 @@ function BotPage(){
         tokenAmount:tokenBalance.toString(),
       }
       setAddressList(newAddressList)
+
+
       let hisBuyAddressList = [...buyHisAddressList]
+    console.log("11",hisBuyAddressList)
       hisBuyAddressList.unshift(wallet0.address)
+    console.log("22",hisBuyAddressList)
       if (hisBuyAddressList.length > 20) {
         setBuyHisAddressList(hisBuyAddressList.slice(0,20))
       }else {
@@ -385,15 +393,18 @@ function BotPage(){
             if (parseFloat(addressList[i].tokenAmount) > parseFloat(sellToken)*Math.pow(10,decimals) &&
               curBalance.gt(gas.mul(610000))
             ){
-
+              console.log("dsadasdasdas",sellHisAddressList)
               let isSellAddress = false
-              if (sellHisAddressList.length > 0) {
-                for(let b = 0 ;i<sellHisAddressList.length;b++){
-                  if (sellHisAddressList[b] === addressList[i]){
-                    isSellAddress = true
+              if (sellHisAddressList) {
+                if (sellHisAddressList.length > 0) {
+                  for(let b = 0 ;b<sellHisAddressList.length;b++){
+                    if (sellHisAddressList[b] === addressList[i]){
+                      isSellAddress = true
+                    }
                   }
                 }
               }
+
               if (isSellAddress === false) {
                 tempAddressList.push(addressList[i])
               }
@@ -537,7 +548,9 @@ function BotPage(){
 
 
     let hisSellAddressList = [...sellHisAddressList]
+    console.log("11",hisSellAddressList)
     hisSellAddressList.unshift(wallet0.address)
+    console.log("22",hisSellAddressList)
     if (hisSellAddressList.length > 20) {
       setSellHisAddressList(hisSellAddressList.slice(0,20))
     }else {
